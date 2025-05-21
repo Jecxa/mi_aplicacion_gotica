@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:http/http.dart' as http;
 
-void main() => runApp(const MyApp());
+void main() {
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -10,74 +13,78 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Sombras Digitales',
-      home: const GothicHome(),
+      title: 'PokéApp Gótica',
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color(0xFF1E1B26),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(fontFamily: 'Unifraktur', fontSize: 20),
+        ),
+      ),
+      home: const PokeScreen(),
     );
   }
 }
 
-class GothicHome extends StatefulWidget {
-  const GothicHome({super.key});
+class Pokemon {
+  final String name;
+  final String imageUrl;
 
-  @override
-  State<GothicHome> createState() => _GothicHomeState();
+  Pokemon({required this.name, required this.imageUrl});
+
+  factory Pokemon.fromJson(Map<String, dynamic> json) {
+    return Pokemon(
+      name: json['name'],
+      imageUrl: json['sprites']['front_default'],
+    );
+  }
 }
 
-class _GothicHomeState extends State<GothicHome> {
-  final AudioPlayer _player = AudioPlayer();
+Future<Pokemon> fetchPokemon(String name) async {
+  final response = await http.get(Uri.parse('https://pokeapi.co/api/v2/pokemon/$name'));
 
-  @override
-  void initState() {
-    super.initState();
-    _playMusic();
+  if (response.statusCode == 200) {
+    return Pokemon.fromJson(jsonDecode(response.body));
+  } else {
+    throw Exception('Error al cargar el Pokémon');
   }
+}
 
-  Future<void> _playMusic() async {
-    await _player.setSource(AssetSource('audio/musica_gotica.mp3'));
-    await _player.setReleaseMode(ReleaseMode.loop);
-    await _player.resume();
-  }
+class PokeScreen extends StatelessWidget {
+  const PokeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Fondo
-          Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/fondo_gotico.jpg'),
-                fit: BoxFit.cover,
+      body: FutureBuilder<Pokemon>(
+        future: fetchPokemon('pikachu'), // Puedes cambiarlo por cualquier Pokémon
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator(color: Colors.deepPurple));
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (snapshot.hasData) {
+            final pokemon = snapshot.data!;
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.network(pokemon.imageUrl),
+                  const SizedBox(height: 20),
+                  Text(
+                    pokemon.name.toUpperCase(),
+                    style: const TextStyle(
+                      fontFamily: 'Unifraktur',
+                      fontSize: 30,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-          // Texto centrado
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text(
-                  'Bienvenido al Templo del Código',
-                  style: TextStyle(
-                    fontFamily: 'Unifraktur',
-                    fontSize: 32,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Aplicación: Sombras Digitales',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white70,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+            );
+          } else {
+            return const Center(child: Text('No se encontró el Pokémon'));
+          }
+        },
       ),
     );
   }
