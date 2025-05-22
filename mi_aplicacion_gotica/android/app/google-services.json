@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "166492237528",
+    "project_id": "mi-aplicacion-gotica",
+    "storage_bucket": "mi-aplicacion-gotica.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:166492237528:android:1c6ff835c5d0977ac271ad",
+        "android_client_info": {
+          "package_name": "com.example.mi_aplicacion_gotica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZY9GXuPTKxDBpDIxrN7X3r6K9uHoXTvs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,5 @@
 name: mi_aplicacion_gotica
-description: "A new Flutter project."
+description: "Aplicación gótica con catálogo de películas y Firebase"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -12,19 +12,29 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.8
   audioplayers: ^5.2.1
-  http: ^0.13.6  # 👈 Esta es la nueva dependencia que añadimos
+  http: ^0.13.6
+  firebase_core: ^2.25.4
+  firebase_auth: ^4.17.8
+  cloud_firestore: ^4.17.5
+  firebase_storage: ^11.6.5
+  image_picker: ^1.1.1
+  cached_network_image: ^3.3.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true
+
   assets:
     - assets/fondo_gotico.jpg
     - assets/audio/
+
   fonts:
     - family: Unifraktur
       fonts:
         - asset: assets/fonts/UnifrakturCook-Bold.ttf
+
